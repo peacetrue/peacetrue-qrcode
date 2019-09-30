@@ -1,7 +1,9 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
+    id "maven-publish"
+    id "signing"
+    id "idea"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
+    id "java-library"
 }
 
 group 'com.github.peacetrue'
@@ -47,25 +49,56 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok"
     compile "com.github.kenglxn.QRGen:javase:2.5.0"
     compile "org.springframework:spring-web"
+    compile "org.springframework.boot:spring-boot-autoconfigure"
     testCompile "junit:junit"
     testCompile "org.springframework.boot:spring-boot-test"
     testCompile "org.springframework.boot:spring-boot-starter-web"
 }
 
 task sourcesJar(type: Jar) {
-    classifier = "sources"
+    archiveClassifier = "sources"
     from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    archiveClassifier = "javadoc"
     from javadoc.destinationDir
 }
 
+def repository_snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
+def repository_releases = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+apply plugin: "maven-publish"
+apply plugin: "signing"
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            pom {
+                name = project.name
+                description = project.description
+                url = "https://github.com/peacetrue/qrcode"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "xiayouxue"
+                        name = "xiayouxue"
+                        email = "xiayouxue@hotmail.com"
+                    }
+                }
+                scm {
+                    connection = "https://github.com/peacetrue/qrcode.git"
+                    developerConnection = "https://github.com/peacetrue/qrcode.git"
+                    url = "https://github.com/peacetrue/peacetrue/qrcode"
+                }
+            }
+
             from components.java
+
             artifact sourcesJar
             artifact javadocJar
         }
@@ -73,9 +106,7 @@ publishing {
 
     repositories {
         maven {
-            def repository_snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
-            def repository_releases = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            url version.endsWith('SNAPSHOT') ? repository_snapshots : repository_releases
+            url version.endsWith("SNAPSHOT") ? repository_snapshots : repository_releases
             credentials {
                 username = ossrhUsername
                 password = ossrhPassword
@@ -84,5 +115,6 @@ publishing {
     }
 }
 
-
-
+signing {
+    sign publishing.publications.mavenJava
+}
