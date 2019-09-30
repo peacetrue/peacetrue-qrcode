@@ -1,0 +1,6 @@
+name: peacetrue-qrcode
+title: 二维码生成服务
+version: master
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/nav.adoc
