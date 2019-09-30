@@ -73,12 +73,12 @@ publishing {
 
     repositories {
         maven {
-            def releasesRepoUrl = "https://nexus.au32.cn/repository/maven-releases"
-            def snapshotsRepoUrl = "https://nexus.au32.cn/repository/maven-snapshots"
-            url version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            def repository_snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
+            def repository_releases = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url version.endsWith('SNAPSHOT') ? repository_snapshots : repository_releases
             credentials {
-                username = 'admin'
-                password = 'gold2018'
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
